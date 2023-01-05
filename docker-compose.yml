@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  
+  db:
+    platform: linux/x86_64
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: my_secret_pwd
+      MYSQL_DATABASE: dev_db
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
+    ports:
+      - "9906:3306"
+  phpmyadmin:
+    platform: linux/x86_64
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "3011:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+  web:
+    platform: linux/x86_64
+    image: php:5.4-apache
+    container_name: php_web
+    depends_on:
+      - db
+    volumes:
+      - ./php/:/var/www/html/
+    ports:
+      - "8100:80"
+    stdin_open: true
+    tty: true
